@@ -2,7 +2,7 @@
 
 A smart home dashboard for older Samsung Tizen TVs (2017, Tizen 3.0). Clock, weather, real-time Stockholm public transport departures and a live TV window, running as a native TV app with no backend and no API keys.
 
-![Dashboard screenshot](docs/screenshot.jpg)
+![Before and after: the stock Samsung home screen vs. the dashboard](docs/screenshot.jpg)
 
 ## Features
 
@@ -52,7 +52,6 @@ Everything lives in `app/js/config.js`. Edit, then reinstall.
 
 - **`install failed[118]`:** the package is unsigned or has an invalid package id. `package` in `config.xml` must be exactly 10 alphanumeric characters, and `-CertProfile` must match a profile in `tizen security-profiles list`. The install script checks both.
 - **Clock shows `--:--` and panels stay on "Loading":** a JavaScript syntax error. The TV only understands ES5. Check with `npx acorn --ecma5 --silent app/js/app.js`.
-- **Live TV shows a black box:** the TV window renders behind the web layer, so the area over the video must be transparent.
 - **Developer Mode disappears** after firmware updates. Repeat step 2; the certificate can be reused.
 - **Testing in Chrome:** open `app/index.html`. Weather works directly, SL and calendar may be blocked by CORS in a normal browser (not on the TV).
 - **Unit tests:** `node test.js` covers the iCal parsing and recurrence logic.
