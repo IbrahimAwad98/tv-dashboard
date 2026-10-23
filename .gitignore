@@ -1,2 +1,5 @@
 .metadata/
 dist/
+app/author-signature.xml
+app/signature*.xml
+app/.manifest.tmp
