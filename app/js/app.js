@@ -43,11 +43,11 @@
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.timeout = 15000;
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState !== 4) return;
+    xhr.onload = function () {
       if (xhr.status >= 200 && xhr.status < 300) ok(xhr.responseText);
       else fail('HTTP ' + xhr.status);
     };
+    xhr.onerror = function () { fail('Nätverksfel'); };
     xhr.ontimeout = function () { fail('Timeout'); };
     xhr.send();
   }

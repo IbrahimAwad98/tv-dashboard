@@ -40,7 +40,7 @@ $wgt = Get-ChildItem $distDir -Filter *.wgt | Select-Object -First 1
 if (-not $wgt) { throw "Ingen .wgt skapades. Kontrollera certifikatprofilen '$CertProfile'." }
 
 Write-Host "3/4 Installerar $($wgt.Name)..." -ForegroundColor Cyan
-& $tizen install -n $wgt.FullName -s $serial | Out-Host
+& $tizen install -n $wgt.Name -s $serial -- $distDir | Out-Host
 
 Write-Host "4/4 Startar appen..." -ForegroundColor Cyan
 & $tizen run -p $appId -s $serial | Out-Host
