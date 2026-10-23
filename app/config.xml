@@ -17,6 +17,8 @@
   <feature name="http://tizen.org/feature/screen.size.all"/>
 
   <tizen:privilege name="http://tizen.org/privilege/internet"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
+  <tizen:privilege name="http://tizen.org/privilege/tv.channel"/>
   <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
 
   <!-- Allow calls to the APIs (packaged Tizen apps are not subject to CORS) -->
