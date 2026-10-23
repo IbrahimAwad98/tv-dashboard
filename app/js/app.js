@@ -7,12 +7,14 @@
 
   // ================= Helpers =================
 
-  var DAYS = ['söndag', 'måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'];
-  var DAYS_SHORT = ['Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör'];
-  var MONTHS = ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli',
-                'augusti', 'september', 'oktober', 'november', 'december'];
+  // Week starts on Monday; index with weekday(), not getDay()
+  var DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  var DAYS_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                'August', 'September', 'October', 'November', 'December'];
 
   function $(id) { return document.getElementById(id); }
+  function weekday(d) { return (d.getDay() + 6) % 7; }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function hhmm(d) { return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
 
@@ -59,7 +61,7 @@
   function tickClock() {
     var now = new Date();
     $('time').textContent = hhmm(now);
-    $('date').textContent = DAYS[now.getDay()] + ' ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
+    $('date').textContent = DAYS[weekday(now)] + ' ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
   }
 
   // ================= Weather (Open-Meteo, no API key) =================
@@ -140,7 +142,7 @@
       var html = '';
       for (var i = 0; i < d.daily.time.length; i++) {
         var p = d.daily.time[i].split('-');
-        var name = i === 0 ? 'Idag' : DAYS_SHORT[new Date(+p[0], +p[1] - 1, +p[2]).getDay()];
+        var name = i === 0 ? 'Idag' : DAYS_SHORT[weekday(new Date(+p[0], +p[1] - 1, +p[2]))];
         html += '<div class="fc-day"><div class="fc-name">' + name + '</div>' +
           '<div class="fc-icon">' + icon(wmo(d.daily.weather_code[i])[1], 1) + '</div>' +
           '<div class="fc-temp">' + Math.round(d.daily.temperature_2m_max[i]) + '° ' +
@@ -298,7 +300,7 @@
                        : [start.getDay()];
     var startDay = startOfDay(start);
     // Monday of the start week (for WEEKLY + INTERVAL)
-    var startMonday = addDays(startDay, -((startDay.getDay() + 6) % 7));
+    var startMonday = addDays(startDay, -weekday(startDay));
 
     var out = [], n = 0;
     // Without COUNT we can skip straight to the window
@@ -381,7 +383,7 @@
         if (it.day !== lastDay) {
           var dd = dayDiff(today, new Date(it.day));
           html += '<div class="cal-day">' + (dd === 0 ? 'Idag' : dd === 1 ? 'Imorgon' :
-                  DAYS[new Date(it.day).getDay()]) + '</div>';
+                  DAYS[weekday(new Date(it.day))]) + '</div>';
           lastDay = it.day;
         }
         html += '<div class="cal-item"><div class="cal-time">' + it.when + '</div>' +

@@ -56,7 +56,6 @@ html, body {
   color: #a9b3c9;
   margin-top: 8px;
 }
-#date:first-letter { text-transform: uppercase; }
 
 /* ---------- Weather ---------- */
 #weather-panel { margin-bottom: 24px; padding: 26px 40px; }
