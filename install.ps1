@@ -22,27 +22,27 @@ $serial  = "${TvIp}:26101"
 $appId   = "IbbeHome01.Hemskarm"
 
 foreach ($f in @($tizen, $sdb)) {
-  if (-not (Test-Path $f)) { throw "Hittar inte $f. Ange rätt sökväg med -TizenHome." }
+  if (-not (Test-Path $f)) { throw "Cannot find $f. Set the correct path with -TizenHome." }
 }
 
-Write-Host "1/4 Ansluter till TV:n ($serial)..." -ForegroundColor Cyan
+Write-Host "1/4 Connecting to the TV ($serial)..." -ForegroundColor Cyan
 & $sdb connect $serial | Out-Host
 $devices = & $sdb devices | Out-String
 if ($devices -notmatch [regex]::Escape($serial)) {
-  throw "TV:n syns inte i 'sdb devices'. Kontrollera Developer Mode, Host PC IP och att TV:n är omstartad."
+  throw "The TV does not show up in 'sdb devices'. Check Developer Mode, Host PC IP and that the TV has been restarted."
 }
 
-Write-Host "2/4 Paketerar appen..." -ForegroundColor Cyan
+Write-Host "2/4 Packaging the app..." -ForegroundColor Cyan
 if (Test-Path $distDir) { Remove-Item $distDir -Recurse -Force }
 New-Item -ItemType Directory -Path $distDir | Out-Null
 & $tizen package -t wgt -s $CertProfile -o $distDir -- $appDir | Out-Host
 $wgt = Get-ChildItem $distDir -Filter *.wgt | Select-Object -First 1
-if (-not $wgt) { throw "Ingen .wgt skapades. Kontrollera certifikatprofilen '$CertProfile'." }
+if (-not $wgt) { throw "No .wgt was created. Check the certificate profile '$CertProfile'." }
 
-Write-Host "3/4 Installerar $($wgt.Name)..." -ForegroundColor Cyan
+Write-Host "3/4 Installing $($wgt.Name)..." -ForegroundColor Cyan
 & $tizen install -n $wgt.Name -s $serial -- $distDir | Out-Host
 
-Write-Host "4/4 Startar appen..." -ForegroundColor Cyan
+Write-Host "4/4 Launching the app..." -ForegroundColor Cyan
 & $tizen run -p $appId -s $serial | Out-Host
 
-Write-Host "Klart! Hemskärmen ska nu synas på TV:n." -ForegroundColor Green
+Write-Host "Done! The home screen should now be showing on the TV." -ForegroundColor Green
