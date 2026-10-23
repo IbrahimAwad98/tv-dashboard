@@ -67,16 +67,16 @@
   // ================= Weather (Open-Meteo, no API key) =================
 
   var WMO = {
-    0: ['Klart', 'clear'], 1: ['Mestadels klart', 'clear'], 2: ['Halvklart', 'partly'],
-    3: ['Mulet', 'cloud'], 45: ['Dimma', 'fog'], 48: ['Rimfrost och dimma', 'fog'],
-    51: ['Lätt duggregn', 'rain'], 53: ['Duggregn', 'rain'], 55: ['Kraftigt duggregn', 'rain'],
-    56: ['Underkylt duggregn', 'rain'], 57: ['Underkylt duggregn', 'rain'],
-    61: ['Lätt regn', 'rain'], 63: ['Regn', 'rain'], 65: ['Kraftigt regn', 'rain'],
-    66: ['Underkylt regn', 'rain'], 67: ['Underkylt regn', 'rain'],
-    71: ['Lätt snöfall', 'snow'], 73: ['Snöfall', 'snow'], 75: ['Kraftigt snöfall', 'snow'],
-    77: ['Snökorn', 'snow'], 80: ['Regnskurar', 'rain'], 81: ['Regnskurar', 'rain'],
-    82: ['Kraftiga skurar', 'rain'], 85: ['Snöbyar', 'snow'], 86: ['Kraftiga snöbyar', 'snow'],
-    95: ['Åska', 'thunder'], 96: ['Åska med hagel', 'thunder'], 99: ['Åska med hagel', 'thunder']
+    0: ['Clear', 'clear'], 1: ['Mostly clear', 'clear'], 2: ['Partly cloudy', 'partly'],
+    3: ['Overcast', 'cloud'], 45: ['Fog', 'fog'], 48: ['Freezing fog', 'fog'],
+    51: ['Light drizzle', 'rain'], 53: ['Drizzle', 'rain'], 55: ['Heavy drizzle', 'rain'],
+    56: ['Freezing drizzle', 'rain'], 57: ['Freezing drizzle', 'rain'],
+    61: ['Light rain', 'rain'], 63: ['Rain', 'rain'], 65: ['Heavy rain', 'rain'],
+    66: ['Freezing rain', 'rain'], 67: ['Freezing rain', 'rain'],
+    71: ['Light snow', 'snow'], 73: ['Snow', 'snow'], 75: ['Heavy snow', 'snow'],
+    77: ['Snow grains', 'snow'], 80: ['Rain showers', 'rain'], 81: ['Rain showers', 'rain'],
+    82: ['Heavy showers', 'rain'], 85: ['Snow showers', 'snow'], 86: ['Heavy snow showers', 'snow'],
+    95: ['Thunderstorm', 'thunder'], 96: ['Thunderstorm with hail', 'thunder'], 99: ['Thunderstorm with hail', 'thunder']
   };
 
   function wmo(code) { return WMO[code] || ['–', 'cloud']; }
@@ -136,13 +136,13 @@
       $('weather-icon').innerHTML = icon(w[1], c.is_day);
       $('weather-temp').textContent = Math.round(c.temperature_2m) + '°';
       $('weather-desc').textContent = w[0];
-      $('weather-extra').textContent = 'Känns som ' + Math.round(c.apparent_temperature) +
-        '° · Vind ' + Math.round(c.wind_speed_10m) + ' m/s';
+      $('weather-extra').textContent = 'Feels like ' + Math.round(c.apparent_temperature) +
+        '° · Wind ' + Math.round(c.wind_speed_10m) + ' m/s';
 
       var html = '';
       for (var i = 0; i < d.daily.time.length; i++) {
         var p = d.daily.time[i].split('-');
-        var name = i === 0 ? 'Idag' : DAYS_SHORT[weekday(new Date(+p[0], +p[1] - 1, +p[2]))];
+        var name = i === 0 ? 'Today' : DAYS_SHORT[weekday(new Date(+p[0], +p[1] - 1, +p[2]))];
         html += '<div class="fc-day"><div class="fc-name">' + name + '</div>' +
           '<div class="fc-icon">' + icon(wmo(d.daily.weather_code[i])[1], 1) + '</div>' +
           '<div class="fc-temp">' + Math.round(d.daily.temperature_2m_max[i]) + '° ' +
@@ -151,7 +151,7 @@
       $('forecast').innerHTML = html;
       markUpdated();
     }, function (err) {
-      $('weather-desc').innerHTML = '<span class="error">Kunde inte hämta väder (' + esc(err) + ')</span>';
+      $('weather-desc').innerHTML = '<span class="error">Could not load weather (' + esc(err) + ')</span>';
     });
   }
 
