@@ -1,11 +1,11 @@
 /*
- * Hemskärm – Samsung Tizen 3.0 (Chromium 47)
- * Ren ES5: inga arrow functions, let/const, template strings, fetch eller Promise.
+ * Home Screen – Samsung Tizen 3.0 (Chromium 47)
+ * Plain ES5: no arrow functions, let/const, template strings, fetch or Promise.
  */
 (function () {
   'use strict';
 
-  // ================= Hjälpfunktioner =================
+  // ================= Helpers =================
 
   var DAYS = ['söndag', 'måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'];
   var DAYS_SHORT = ['Sön', 'Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör'];
@@ -25,7 +25,7 @@
   function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
   function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
   function dayDiff(a, b) {
-    // Antal hela dagar från a till b (DST-säkert via UTC)
+    // Number of whole days from a to b (DST-safe via UTC)
     var ua = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
     var ub = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
     return Math.round((ub - ua) / 86400000);
@@ -56,7 +56,7 @@
     $('updated').textContent = 'Uppdaterad ' + hhmm(new Date());
   }
 
-  // ================= Klocka =================
+  // ================= Clock =================
 
   function tickClock() {
     var now = new Date();
@@ -64,7 +64,7 @@
     $('date').textContent = DAYS[now.getDay()] + ' ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
   }
 
-  // ================= Väder (Open-Meteo, ingen nyckel) =================
+  // ================= Weather (Open-Meteo, no API key) =================
 
   var WMO = {
     0: ['Klart', 'clear'], 1: ['Mestadels klart', 'clear'], 2: ['Halvklart', 'partly'],
@@ -156,7 +156,7 @@
     });
   }
 
-  // ================= SL-avgångar (Trafiklab, ingen nyckel) =================
+  // ================= SL departures (Trafiklab, no API key) =================
 
   function lineClass(dep) {
     var mode = dep.line.transport_mode || '';
@@ -212,7 +212,7 @@
         $('sl-list').innerHTML = html;
       }
 
-      // Unika störningsmeddelanden (ej "Inställd")
+      // Unique deviation messages (excluding cancellations)
       var seen = {}, msgs = [];
       var all = (d.stop_deviations || []).slice();
       for (var j = 0; j < deps.length; j++) all = all.concat(deps[j].deviations || []);
@@ -229,7 +229,7 @@
     });
   }
 
-  // ================= Kalender (iCal/ICS) =================
+  // ================= Calendar (iCal/ICS) =================
 
   function parseIcsDate(prop) {
     // prop = { params: 'TZID=Europe/Stockholm' | 'VALUE=DATE' | '', value: '20261023T090000Z' }
@@ -240,12 +240,12 @@
     if (v.charAt(v.length - 1) === 'Z') {
       return { date: new Date(Date.UTC(y, mo, da, h, mi, s)), allDay: false };
     }
-    // TZID eller flytande tid: tolkas som TV:ns lokala tid
+    // TZID or floating time: interpreted as the TV's local time
     return { date: new Date(y, mo, da, h, mi, s), allDay: false };
   }
 
   function parseIcs(text) {
-    // "Unfold" radbrytningar enligt RFC 5545
+    // Unfold line continuations per RFC 5545
     var lines = text.replace(/\r\n[ \t]/g, '').replace(/\n[ \t]/g, '').split(/\r?\n/);
     var events = [], ev = null;
     for (var i = 0; i < lines.length; i++) {
@@ -289,11 +289,11 @@
 
   var BYDAY = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
 
-  // Returnerar startdatum (Date) för alla förekomster inom [from, to)
+  // Returns the start date (Date) of every occurrence within [from, to)
   function occurrences(ev, from, to) {
     var start = ev.start.date;
     if (!ev.rrule) return start >= from && start < to ? [start] : (
-      // Flerdagars/heldagsevent som pågår
+      // Ongoing multi-day / all-day event
       ev.end && ev.end.date > from && start < to ? [start] : []
     );
 
@@ -304,11 +304,11 @@
     var days = r.BYDAY ? r.BYDAY.split(',').map(function (d) { return BYDAY[d.slice(-2)]; })
                        : [start.getDay()];
     var startDay = startOfDay(start);
-    // Måndag i startveckan (för WEEKLY + INTERVAL)
+    // Monday of the start week (for WEEKLY + INTERVAL)
     var startMonday = addDays(startDay, -((startDay.getDay() + 6) % 7));
 
     var out = [], n = 0;
-    // Utan COUNT kan vi hoppa direkt till fönstret
+    // Without COUNT we can skip straight to the window
     var cur = count ? startDay : (startOfDay(from) > startDay ? startOfDay(from) : startDay);
     var limit = 0;
 
@@ -350,7 +350,7 @@
       var today = startOfDay(new Date());
       var to = addDays(today, CONFIG.calendarDays);
 
-      // Ändrade enskilda förekomster ersätter originalet den dagen
+      // Modified single occurrences replace the original on that day
       var overrides = {};
       events.forEach(function (e) {
         if (e.recurrenceId) {
@@ -363,7 +363,7 @@
       events.forEach(function (e) {
         if (e.status === 'CANCELLED') return;
         if (e.rrule && overrides[e.uid]) e.exdates = e.exdates.concat(overrides[e.uid]);
-        // Längd, så att passerade möten kan döljas
+        // Duration, so that finished meetings can be hidden
         var dur = e.end && !e.start.allDay ? e.end.date - e.start.date : 3600000;
         var occ = occurrences(e, today, to);
         for (var i = 0; i < occ.length; i++) {
@@ -398,7 +398,7 @@
     });
   }
 
-  // ================= Fjärrkontroll =================
+  // ================= Remote control =================
 
   function refreshAll() {
     loadWeather();
@@ -411,7 +411,7 @@
       case 13:     // OK
         refreshAll();
         break;
-      case 10009:  // Tillbaka
+      case 10009:  // Back
         try { tizen.application.getCurrentApplication().exit(); } catch (err) {}
         break;
     }
@@ -422,7 +422,7 @@
   function disableScreenSaver() {
     try {
       webapis.appcommon.setScreenSaver(webapis.appcommon.AppCommonScreenSaverState.SCREEN_SAVER_OFF);
-    } catch (e) { /* inte på TV */ }
+    } catch (e) { /* not on a TV */ }
   }
 
   function init() {
@@ -438,7 +438,7 @@
     setInterval(loadSl, CONFIG.refreshSl * 1000);
     setInterval(loadCalendar, CONFIG.refreshCalendar * 1000);
 
-    // Hämta nytt direkt när appen kommer tillbaka i förgrunden
+    // Refresh immediately when the app returns to the foreground
     document.addEventListener('visibilitychange', function () {
       if (!document.hidden) { disableScreenSaver(); refreshAll(); }
     });

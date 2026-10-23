@@ -1,11 +1,11 @@
 <#
-  Hemskärm – bygg och installera på Samsung-TV:n med ett kommando.
+  Home Screen – build and install on the Samsung TV with one command.
 
-  Användning (PowerShell i projektmappen):
-    .\install.ps1 -TvIp 192.168.1.50 -CertProfile MinTV
+  Usage (PowerShell in the project folder):
+    .\install.ps1 -TvIp 192.168.1.50 -CertProfile MyTV
 
-  Krav: Tizen Studio med TV Extensions + Samsung Certificate Extension,
-  Developer Mode på TV:n och ett Samsung-certifikat (se README).
+  Requires: Tizen Studio with TV Extensions + Samsung Certificate Extension,
+  Developer Mode on the TV and a Samsung certificate (see README).
 #>
 param(
   [Parameter(Mandatory = $true)] [string] $TvIp,
