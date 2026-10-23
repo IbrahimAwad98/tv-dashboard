@@ -160,7 +160,7 @@
   function lineClass(dep) {
     var mode = dep.line.transport_mode || '';
     var group = (dep.line.group_of_lines || '').toLowerCase();
-    var cls = 'line mode-' + mode;
+    var cls = 'line mode-' + esc(mode);
     if (mode === 'METRO') {
       if (group.indexOf('grön') !== -1) cls += ' green';
       else if (group.indexOf('röd') !== -1) cls += ' red';
