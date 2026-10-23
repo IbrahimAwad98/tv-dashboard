@@ -96,7 +96,6 @@ html, body {
   color: #7f8aa3;
   margin: 6px 0 10px;
 }
-.cal-day + .cal-item { margin-top: 0; }
 .cal-item {
   display: -webkit-flex; display: flex;
   font-size: 30px;
@@ -187,6 +186,6 @@ html, body {
   color: #4d5770;
 }
 #footer span { margin-right: 40px; }
-#updated { float: right; margin-right: 0 !important; }
+#footer #updated { float: right; margin-right: 0; }
 
 .error { color: #ff7a7a; font-size: 28px; }
