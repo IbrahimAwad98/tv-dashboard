@@ -35,7 +35,7 @@
 
   function getJSON(url, ok, fail) {
     getText(url, function (txt) {
-      try { ok(JSON.parse(txt)); } catch (e) { fail('Ogiltigt svar'); }
+      try { ok(JSON.parse(txt)); } catch (e) { fail('Invalid response'); }
     }, fail);
   }
 
@@ -47,13 +47,13 @@
       if (xhr.status >= 200 && xhr.status < 300) ok(xhr.responseText);
       else fail('HTTP ' + xhr.status);
     };
-    xhr.onerror = function () { fail('Nätverksfel'); };
+    xhr.onerror = function () { fail('Network error'); };
     xhr.ontimeout = function () { fail('Timeout'); };
     xhr.send();
   }
 
   function markUpdated() {
-    $('updated').textContent = 'Uppdaterad ' + hhmm(new Date());
+    $('updated').textContent = 'Updated ' + hhmm(new Date());
   }
 
   // ================= Clock =================
@@ -189,15 +189,15 @@
       deps = deps.slice(0, CONFIG.slMaxDepartures);
 
       if (!deps.length) {
-        $('sl-list').innerHTML = '<div class="muted">Inga avgångar just nu</div>';
+        $('sl-list').innerHTML = '<div class="muted">No departures right now</div>';
       } else {
         var html = '';
         for (var i = 0; i < deps.length; i++) {
           var dep = deps[i];
           var cancelled = dep.state === 'CANCELLED';
-          var display = cancelled ? 'Inställd' : dep.display;
+          var display = cancelled ? 'Cancelled' : dep.display;
           var platform = dep.stop_point && dep.stop_point.designation
-            ? 'Läge ' + dep.stop_point.designation : '';
+            ? 'Platform ' + dep.stop_point.designation : '';
           var via = dep.via ? 'via ' + dep.via : '';
           var sub = [platform, via].filter(function (x) { return x; }).join(' · ');
 
@@ -224,7 +224,7 @@
       }).join('');
       markUpdated();
     }, function (err) {
-      $('sl-list').innerHTML = '<div class="error">Kunde inte hämta avgångar (' + esc(err) + ')</div>';
+      $('sl-list').innerHTML = '<div class="error">Could not load departures (' + esc(err) + ')</div>';
     });
   }
 
@@ -368,8 +368,8 @@
             date: at,
             allDay: allDay,
             day: startOfDay(at < today ? today : at).getTime(),
-            when: allDay ? 'Heldag' : at < today ? 'Pågår' : hhmm(at),
-            title: e.title || '(utan titel)'
+            when: allDay ? 'All day' : at < today ? 'Ongoing' : hhmm(at),
+            title: e.title || '(untitled)'
           });
         }
       });
@@ -382,16 +382,16 @@
         var it = items[i];
         if (it.day !== lastDay) {
           var dd = dayDiff(today, new Date(it.day));
-          html += '<div class="cal-day">' + (dd === 0 ? 'Idag' : dd === 1 ? 'Imorgon' :
+          html += '<div class="cal-day">' + (dd === 0 ? 'Today' : dd === 1 ? 'Tomorrow' :
                   DAYS[weekday(new Date(it.day))]) + '</div>';
           lastDay = it.day;
         }
         html += '<div class="cal-item"><div class="cal-time">' + it.when + '</div>' +
           '<div class="cal-title">' + esc(it.title) + '</div></div>';
       }
-      $('calendar-list').innerHTML = html || '<div class="muted">Inget inplanerat</div>';
+      $('calendar-list').innerHTML = html || '<div class="muted">Nothing scheduled</div>';
     }, function (err) {
-      $('calendar-list').innerHTML = '<div class="error">Kunde inte hämta kalender (' + esc(err) + ')</div>';
+      $('calendar-list').innerHTML = '<div class="error">Could not load calendar (' + esc(err) + ')</div>';
     });
   }
 

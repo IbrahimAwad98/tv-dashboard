@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=1920, height=1080">
-  <title>Hemskärm</title>
+  <title>Home Screen</title>
   <link rel="stylesheet" href="css/style.css">
   <!-- Samsung TV API (only exists on the TV, ignored in Chrome) -->
   <script src="$WEBAPIS/webapis/webapis.js"></script>
@@ -31,22 +31,22 @@
       </section>
 
       <section id="calendar-panel" class="panel">
-        <div class="panel-title">Kalender</div>
-        <div id="calendar-list"><div class="muted">Laddar…</div></div>
+        <div class="panel-title">Calendar</div>
+        <div id="calendar-list"><div class="muted">Loading…</div></div>
       </section>
     </div>
 
     <section id="sl-panel" class="panel">
-      <div class="panel-title">Avgångar · <span id="sl-site"></span></div>
-      <div id="sl-list"><div class="muted">Laddar…</div></div>
+      <div class="panel-title">Departures · <span id="sl-site"></span></div>
+      <div id="sl-list"><div class="muted">Loading…</div></div>
       <div id="sl-deviations"></div>
     </section>
 
   </div>
 
   <div id="footer">
-    <span>OK = uppdatera</span>
-    <span>Tillbaka = avsluta</span>
+    <span>OK = refresh</span>
+    <span>Back = exit</span>
     <span id="updated"></span>
   </div>
 
