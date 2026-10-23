@@ -1,5 +1,14 @@
+# Tizen Studio / build output
 .metadata/
+.buildResult/
 dist/
+*.wgt
+
+# Signature leftovers the Tizen CLI writes into app/
 app/author-signature.xml
 app/signature*.xml
 app/.manifest.tmp
+
+# Certificates and keys – never commit these
+*.p12
+*.pem

@@ -26,6 +26,10 @@ var CONFIG = {
   calendarIcsUrl: '',
   calendarDays: 2, // today + tomorrow
 
+  // ---- Live TV (bottom-left corner, replaces the calendar panel) ----
+  // Set to false to show the calendar instead.
+  liveTv: true,
+
   // ---- Refresh intervals (seconds) ----
   refreshWeather: 600,
   refreshSl: 30,

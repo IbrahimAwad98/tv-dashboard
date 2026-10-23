@@ -1,83 +1,62 @@
-# Home Screen – dashboard for Samsung UE49M5515 (Tizen 3.0)
+# TV Dashboard
 
-Clock, weather (Open-Meteo), real-time SL departures (Trafiklab) and today's calendar. Everything is built for the TV's old web engine (Chromium 47): plain ES5, no frameworks and no build step.
+A smart home dashboard for older Samsung Tizen TVs (2017, Tizen 3.0). Clock, weather, real-time Stockholm public transport departures and a live TV window, running as a native TV app with no backend and no API keys.
 
-```
-tv-dashboard/
-├── app/                 ← this becomes the TV app
-│   ├── config.xml       Tizen manifest
-│   ├── index.html
-│   ├── icon.png
-│   ├── css/style.css
-│   └── js/
-│       ├── config.js    ← YOUR SETTINGS
-│       └── app.js
-└── install.ps1          builds + installs + launches with one command
-```
+![Dashboard screenshot](docs/screenshot.jpg)
 
-## 1. Set your stop and calendar
+## Features
 
-Open `app/js/config.js`:
+- **Clock** with date and weekday
+- **Weather** and 5-day forecast from [Open-Meteo](https://open-meteo.com/)
+- **SL departures** in real time from [Trafiklab](https://www.trafiklab.se/), with line colours, platforms and disruption notices
+- **Live TV** from the built-in tuner in the bottom-left corner via the Tizen TVWindow API, with CH+/CH- channel switching
+- **Calendar** (optional) from any iCal/ICS feed, shown instead of live TV
 
-- **Stop:** Open <https://transport.integration.sl.se/v1/sites> in your browser, press Ctrl+F and search for your stop. Copy the `id` value into `slSiteId` and put the name in `slSiteName`.
-- **Filter:** `slTransportModes` picks which modes of transport are shown, for example only `['METRO']`. `slLines` picks individual lines, for example `['17','18','19']`.
-- **Calendar:** Go to Google Calendar → Settings → select your calendar → *Secret address in iCal format*. Paste the link into `calendarIcsUrl`. If the field is empty the calendar is hidden.
-- **Weather:** Change `latitude`/`longitude` if you don't live in central Stockholm.
+## Tech notes
 
-No API keys are needed.
+Written for the TV's web engine, Chromium 47 on Tizen 3.0. That means plain ES5 (`var`, `XMLHttpRequest`, no `fetch`, `Promise`, arrow functions or CSS variables), no frameworks and no build step. The whole app is three JavaScript files and one stylesheet in `app/`.
 
-## 2. Prepare your computer (once)
+## Getting started
 
-1. Install **Tizen Studio** (default path `C:\tizen-studio`).
-2. Open **Package Manager → Extension SDK** and install **TV Extensions-3.0** (or later) and **Samsung Certificate Extension**.
+Tested on a Samsung UE49M5515. Any Tizen 3.0+ TV should work.
 
-## 3. Enable Developer Mode on the TV (once)
+1. **Install [Tizen Studio](https://developer.tizen.org/development/tizen-studio/download)** (default path `C:\tizen-studio`). In Package Manager, Extension SDK, install **TV Extensions** and **Samsung Certificate Extension**.
+2. **Enable Developer Mode on the TV.** Open Apps, press `1 2 3 4 5` on the remote, turn on Developer mode and enter your computer's IP. Power-cycle the TV.
+3. **Connect:** `C:\tizen-studio\tools\sdb.exe connect <TV-IP>`
+4. **Create a certificate** in Tizen Studio: Tools, Certificate Manager, `+`, Samsung, TV. Sign in with your Samsung account and pick a distributor certificate with the **Public** privilege. The TV's DUID is added automatically while it is connected. Note the profile name.
+5. **Install:**
 
-1. Open **Apps** on the TV and press **1 2 3 4 5** on the remote.
-2. Turn on **Developer mode** and enter **your computer's IP address**. Find it by running `ipconfig` and reading the IPv4 value.
-3. Turn off the TV and unplug the power cord for 30 seconds so it restarts properly.
-4. Read the TV's IP address under *Settings → General → Network → Network Status → IP Settings*.
+   ```powershell
+   .\install.ps1 -TvIp <TV-IP> -CertProfile <profile>
+   ```
 
-## 4. Create a Samsung certificate (once)
+   The script packages, signs, installs and launches the app, and stops with a clear error if any step fails. If PowerShell blocks it, run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once.
 
-1. Connect to the TV: `C:\tizen-studio\tools\sdb.exe connect <TV-IP>`
-2. In Tizen Studio: **Tools → Certificate Manager → +**.
-3. Choose **Samsung**, then **TV**, and give the profile a name, for example `MyTV`.
-4. Create a new author certificate and sign in with your **Samsung account**.
-5. Choose a distributor certificate with privilege **Public** and make sure the TV's **DUID** is in the list. It is added automatically while the TV is connected.
+| Remote button | Action          |
+|---------------|-----------------|
+| OK            | Refresh all     |
+| CH+ / CH-     | Change channel  |
+| Back          | Exit the app    |
 
-## 5. Install
+## Configuration
 
-Run in PowerShell, in the project folder:
+Everything lives in `app/js/config.js`. Edit, then reinstall.
 
-```powershell
-.\install.ps1 -TvIp 192.168.1.50 -CertProfile MyTV
-```
+- **Stop:** open <https://transport.integration.sl.se/v1/sites>, search for your stop and copy its `id` into `slSiteId`. `slTransportModes` and `slLines` filter what is shown.
+- **Weather:** `latitude` / `longitude` of your location.
+- **Live TV:** `liveTv: true` shows the tuner in the bottom-left corner. Set it to `false` to show the calendar there instead.
+- **Calendar:** paste an iCal URL into `calendarIcsUrl` (Google Calendar: Settings, your calendar, *Secret address in iCal format*). Supports all-day, multi-day and common recurring events. Leave empty to hide.
+- **Refresh intervals** in seconds: `refreshWeather`, `refreshSl`, `refreshCalendar`.
 
-If PowerShell blocks the script, first run:
-`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+## Troubleshooting
 
-The app is called **Hemskarm** under Apps on the TV.
+- **`install failed[118]`:** the package is unsigned or has an invalid package id. `package` in `config.xml` must be exactly 10 alphanumeric characters, and `-CertProfile` must match a profile in `tizen security-profiles list`. The install script checks both.
+- **Clock shows `--:--` and panels stay on "Loading":** a JavaScript syntax error. The TV only understands ES5. Check with `npx acorn --ecma5 --silent app/js/app.js`.
+- **Live TV shows a black box:** the TV window renders behind the web layer, so the area over the video must be transparent.
+- **Developer Mode disappears** after firmware updates. Repeat step 2; the certificate can be reused.
+- **Testing in Chrome:** open `app/index.html`. Weather works directly, SL and calendar may be blocked by CORS in a normal browser (not on the TV).
+- **Unit tests:** `node test.js` covers the iCal parsing and recurrence logic.
 
-## Remote control
+## License
 
-| Button | Function        |
-|--------|-----------------|
-| OK     | Refresh all     |
-| Back   | Exit the app    |
-
-## Test in Chrome before installing
-
-Open `app/index.html` directly in Chrome. Weather works as is. SL and Google Calendar may be blocked by CORS in a regular browser. On the TV this is not a problem, since packaged Tizen apps are not restricted by CORS. To test everything locally, start a separate Chrome profile without CORS:
-
-```powershell
-& "C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir="$env:TEMP\chrome-tv-test" --window-size=1920,1080
-```
-
-## Good to know
-
-- **The screensaver** is disabled while the app is open. The TV's *Auto Power Off* (General → Eco) can still turn it off after a few hours. Disable that feature if the screen should stay on all day.
-- **The calendar** handles all-day events, multi-day events and common recurring meetings (daily, weekly, monthly, yearly, with `COUNT`/`UNTIL`, exceptions and moved occurrences). Unusual rules, such as "second Tuesday of the month", are not shown.
-- **Developer Mode** may be turned off after firmware updates. Repeat step 3 if so. The certificate can be reused.
-- **Adding more:** Write new code in `app.js`. Stick to ES5: no `let`/`const`, arrow functions, `fetch`, `Promise` or CSS variables.
-- **Tests:** `node test.js` checks the iCal parsing and recurrence logic.
+[MIT](LICENSE)
