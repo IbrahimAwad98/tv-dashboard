@@ -33,9 +33,7 @@
 
   function getJSON(url, ok, fail) {
     getText(url, function (txt) {
-      var data;
-      try { data = JSON.parse(txt); } catch (e) { fail('Ogiltigt svar'); return; }
-      ok(data);
+      try { ok(JSON.parse(txt)); } catch (e) { fail('Ogiltigt svar'); }
     }, fail);
   }
 
@@ -139,11 +137,10 @@
       $('weather-extra').textContent = 'Känns som ' + Math.round(c.apparent_temperature) +
         '° · Vind ' + Math.round(c.wind_speed_10m) + ' m/s';
 
-      var html = '', today = startOfDay(new Date());
+      var html = '';
       for (var i = 0; i < d.daily.time.length; i++) {
         var p = d.daily.time[i].split('-');
-        var day = new Date(+p[0], +p[1] - 1, +p[2]);
-        var name = dayDiff(today, day) === 0 ? 'Idag' : DAYS_SHORT[day.getDay()];
+        var name = i === 0 ? 'Idag' : DAYS_SHORT[new Date(+p[0], +p[1] - 1, +p[2]).getDay()];
         html += '<div class="fc-day"><div class="fc-name">' + name + '</div>' +
           '<div class="fc-icon">' + icon(wmo(d.daily.weather_code[i])[1], 1) + '</div>' +
           '<div class="fc-temp">' + Math.round(d.daily.temperature_2m_max[i]) + '° ' +
@@ -231,9 +228,9 @@
 
   // ================= Calendar (iCal/ICS) =================
 
-  function parseIcsDate(prop) {
-    // prop = { params: 'TZID=Europe/Stockholm' | 'VALUE=DATE' | '', value: '20261023T090000Z' }
-    var v = prop.value, allDay = v.length === 8;
+  function parseIcsDate(v) {
+    // v = '20261023' (all-day) | '20261023T090000' (floating/TZID) | '20261023T090000Z' (UTC)
+    var allDay = v.length === 8;
     var y = +v.substr(0, 4), mo = +v.substr(4, 2) - 1, da = +v.substr(6, 2);
     if (allDay) return { date: new Date(y, mo, da), allDay: true };
     var h = +v.substr(9, 2), mi = +v.substr(11, 2), s = +v.substr(13, 2);
@@ -255,23 +252,19 @@
       if (!ev) continue;
       var c = line.indexOf(':');
       if (c < 0) continue;
-      var left = line.substr(0, c), value = line.substr(c + 1);
-      var semi = left.indexOf(';');
-      var name = semi < 0 ? left : left.substr(0, semi);
-      var params = semi < 0 ? '' : left.substr(semi + 1);
-      var prop = { params: params, value: value };
+      var name = line.substr(0, c).split(';')[0], value = line.substr(c + 1);
 
-      if (name === 'DTSTART') ev.start = parseIcsDate(prop);
-      else if (name === 'DTEND') ev.end = parseIcsDate(prop);
+      if (name === 'DTSTART') ev.start = parseIcsDate(value);
+      else if (name === 'DTEND') ev.end = parseIcsDate(value);
       else if (name === 'SUMMARY') ev.title = value.replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/gi, ' ');
       else if (name === 'RRULE') ev.rrule = value;
       else if (name === 'UID') ev.uid = value;
       else if (name === 'STATUS') ev.status = value;
-      else if (name === 'RECURRENCE-ID') ev.recurrenceId = parseIcsDate(prop);
+      else if (name === 'RECURRENCE-ID') ev.recurrenceId = parseIcsDate(value);
       else if (name === 'EXDATE') {
         var parts = value.split(',');
         for (var p = 0; p < parts.length; p++) {
-          ev.exdates.push(startOfDay(parseIcsDate({ params: params, value: parts[p] }).date).getTime());
+          ev.exdates.push(startOfDay(parseIcsDate(parts[p]).date).getTime());
         }
       }
     }
@@ -292,14 +285,14 @@
   // Returns the start date (Date) of every occurrence within [from, to)
   function occurrences(ev, from, to) {
     var start = ev.start.date;
-    if (!ev.rrule) return start >= from && start < to ? [start] : (
-      // Ongoing multi-day / all-day event
-      ev.end && ev.end.date > from && start < to ? [start] : []
-    );
+    if (!ev.rrule) {
+      var ongoing = ev.end && ev.end.date > from;
+      return start < to && (start >= from || ongoing) ? [start] : [];
+    }
 
     var r = parseRrule(ev.rrule);
     var freq = r.FREQ, interval = +(r.INTERVAL || 1);
-    var until = r.UNTIL ? parseIcsDate({ value: r.UNTIL }).date : null;
+    var until = r.UNTIL ? parseIcsDate(r.UNTIL).date : null;
     var count = r.COUNT ? +r.COUNT : null;
     var days = r.BYDAY ? r.BYDAY.split(',').map(function (d) { return BYDAY[d.slice(-2)]; })
                        : [start.getDay()];
@@ -367,29 +360,31 @@
         var dur = e.end && !e.start.allDay ? e.end.date - e.start.date : 3600000;
         var occ = occurrences(e, today, to);
         for (var i = 0; i < occ.length; i++) {
-          if (!e.start.allDay && occ[i].getTime() + dur < now.getTime()) continue;
-          items.push({ date: occ[i], allDay: e.start.allDay, title: e.title || '(utan titel)' });
+          var at = occ[i], allDay = e.start.allDay;
+          if (!allDay && at.getTime() + dur < now.getTime()) continue;
+          items.push({
+            date: at,
+            allDay: allDay,
+            day: startOfDay(at < today ? today : at).getTime(),
+            when: allDay ? 'Heldag' : at < today ? 'Pågår' : hhmm(at),
+            title: e.title || '(utan titel)'
+          });
         }
       });
 
-      items.sort(function (a, b) {
-        if (a.allDay !== b.allDay && startOfDay(a.date).getTime() === startOfDay(b.date).getTime()) {
-          return a.allDay ? -1 : 1;
-        }
-        return a.date - b.date;
-      });
+      // Day, then all-day first, then start time
+      items.sort(function (a, b) { return a.day - b.day || b.allDay - a.allDay || a.date - b.date; });
 
       var html = '', lastDay = null;
       for (var i = 0; i < items.length; i++) {
-        var it = items[i], d = startOfDay(it.date < today ? today : it.date).getTime();
-        if (d !== lastDay) {
-          var dd = dayDiff(today, new Date(d));
+        var it = items[i];
+        if (it.day !== lastDay) {
+          var dd = dayDiff(today, new Date(it.day));
           html += '<div class="cal-day">' + (dd === 0 ? 'Idag' : dd === 1 ? 'Imorgon' :
-                  DAYS[new Date(d).getDay()]) + '</div>';
-          lastDay = d;
+                  DAYS[new Date(it.day).getDay()]) + '</div>';
+          lastDay = it.day;
         }
-        html += '<div class="cal-item"><div class="cal-time">' +
-          (it.allDay ? 'Heldag' : hhmm(it.date)) + '</div>' +
+        html += '<div class="cal-item"><div class="cal-time">' + it.when + '</div>' +
           '<div class="cal-title">' + esc(it.title) + '</div></div>';
       }
       $('calendar-list').innerHTML = html || '<div class="muted">Inget inplanerat</div>';

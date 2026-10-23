@@ -80,3 +80,4 @@ Open `app/index.html` directly in Chrome. Weather works as is. SL and Google Cal
 - **The calendar** handles all-day events, multi-day events and common recurring meetings (daily, weekly, monthly, yearly, with `COUNT`/`UNTIL`, exceptions and moved occurrences). Unusual rules, such as "second Tuesday of the month", are not shown.
 - **Developer Mode** may be turned off after firmware updates. Repeat step 3 if so. The certificate can be reused.
 - **Adding more:** Write new code in `app.js`. Stick to ES5: no `let`/`const`, arrow functions, `fetch`, `Promise` or CSS variables.
+- **Tests:** `node test.js` checks the iCal parsing and recurrence logic.
