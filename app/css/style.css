@@ -103,8 +103,7 @@ html, body {
   padding: 6px 0;
 }
 .cal-time { width: 170px; color: #5b9cff; -webkit-flex-shrink: 0; flex-shrink: 0; }
-.cal-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cal-gap { height: 18px; }
+.cal-title { -webkit-flex: 1; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---------- SL ---------- */
 #sl-panel {
@@ -145,6 +144,7 @@ html, body {
 
 .dest {
   -webkit-flex: 1; flex: 1;
+  min-width: 0;
   font-size: 38px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
