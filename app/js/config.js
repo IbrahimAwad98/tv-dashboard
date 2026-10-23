@@ -23,6 +23,7 @@ var CONFIG = {
   // ---- Calendar (optional) ----
   // Google Calendar: Settings → your calendar → "Secret address in iCal format".
   // Paste the full link (ends with basic.ics). Leave empty to hide the calendar.
+  // The link is a secret: anyone who has it can read your calendar. Don't commit it to a public repo.
   calendarIcsUrl: '',
   calendarDays: 2, // today + tomorrow
 
