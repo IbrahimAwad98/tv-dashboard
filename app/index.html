@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>Hemskärm</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Samsung TV-API (finns bara på TV:n, ignoreras i Chrome) -->
+  <script src="$WEBAPIS/webapis/webapis.js"></script>
+</head>
+<body>
+  <div id="screen">
+
+    <div id="left">
+      <section id="clock-panel">
+        <div id="time">--:--</div>
+        <div id="date">&nbsp;</div>
+      </section>
+
+      <section id="weather-panel" class="panel">
+        <div class="panel-title">Väder · <span id="weather-place"></span></div>
+        <div id="weather-now">
+          <div id="weather-icon"></div>
+          <div id="weather-main">
+            <div id="weather-temp">--°</div>
+            <div id="weather-desc">Laddar…</div>
+            <div id="weather-extra"></div>
+          </div>
+        </div>
+        <div id="forecast"></div>
+      </section>
+
+      <section id="calendar-panel" class="panel">
+        <div class="panel-title">Kalender</div>
+        <div id="calendar-list"><div class="muted">Laddar…</div></div>
+      </section>
+    </div>
+
+    <section id="sl-panel" class="panel">
+      <div class="panel-title">Avgångar · <span id="sl-site"></span></div>
+      <div id="sl-list"><div class="muted">Laddar…</div></div>
+      <div id="sl-deviations"></div>
+    </section>
+
+  </div>
+
+  <div id="footer">
+    <span>OK = uppdatera</span>
+    <span>Tillbaka = avsluta</span>
+    <span id="updated"></span>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+/* Skrivet för Chromium 47 (Tizen 3.0):
+   inga CSS-variabler, ingen grid, ingen flex-gap. */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: #0b0f17;
+  color: #e8ecf3;
+  font-family: "SamsungOne", "Samsung Sans", "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#screen {
+  position: absolute;
+  top: 56px; left: 72px; right: 72px; bottom: 96px;
+  display: -webkit-flex; display: flex;
+}
+
+#left {
+  width: 760px;
+  margin-right: 48px;
+  display: -webkit-flex; display: flex;
+  -webkit-flex-direction: column; flex-direction: column;
+}
+
+.panel {
+  background: #141a26;
+  border: 1px solid #1f2738;
+  border-radius: 24px;
+  padding: 32px 40px;
+}
+
+.panel-title {
+  font-size: 24px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #7f8aa3;
+  margin-bottom: 16px;
+}
+
+.muted { color: #6b7590; font-size: 30px; }
+
+/* ---------- Klocka ---------- */
+#clock-panel { padding: 0 8px 24px; }
+#time {
+  font-size: 150px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -4px;
+}
+#date {
+  font-size: 40px;
+  color: #a9b3c9;
+  margin-top: 8px;
+}
+#date:first-letter { text-transform: uppercase; }
+
+/* ---------- Väder ---------- */
+#weather-panel { margin-bottom: 24px; padding: 26px 40px; }
+#weather-now {
+  display: -webkit-flex; display: flex;
+  -webkit-align-items: center; align-items: center;
+  margin-bottom: 18px;
+}
+#weather-icon { width: 110px; height: 110px; margin-right: 28px; }
+#weather-icon svg { width: 110px; height: 110px; }
+#weather-temp { font-size: 80px; font-weight: 300; line-height: 1; }
+#weather-desc { font-size: 34px; color: #cfd6e4; margin-top: 6px; }
+#weather-extra { font-size: 26px; color: #7f8aa3; margin-top: 6px; }
+
+#forecast {
+  display: -webkit-flex; display: flex;
+  border-top: 1px solid #1f2738;
+  padding-top: 16px;
+}
+.fc-day {
+  -webkit-flex: 1; flex: 1;
+  text-align: center;
+}
+.fc-name { font-size: 26px; color: #7f8aa3; }
+.fc-icon { width: 52px; height: 52px; margin: 4px auto; }
+.fc-icon svg { width: 52px; height: 52px; }
+.fc-temp { font-size: 28px; }
+.fc-temp span { color: #6b7590; }
+
+/* ---------- Kalender ---------- */
+#calendar-panel {
+  -webkit-flex: 1; flex: 1;
+  overflow: hidden;
+}
+.cal-day {
+  font-size: 24px;
+  color: #7f8aa3;
+  margin: 6px 0 10px;
+}
+.cal-day + .cal-item { margin-top: 0; }
+.cal-item {
+  display: -webkit-flex; display: flex;
+  font-size: 30px;
+  padding: 6px 0;
+}
+.cal-time { width: 170px; color: #5b9cff; -webkit-flex-shrink: 0; flex-shrink: 0; }
+.cal-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-gap { height: 18px; }
+
+/* ---------- SL ---------- */
+#sl-panel {
+  -webkit-flex: 1; flex: 1;
+  display: -webkit-flex; display: flex;
+  -webkit-flex-direction: column; flex-direction: column;
+  overflow: hidden;
+}
+#sl-list { -webkit-flex: 1; flex: 1; overflow: hidden; }
+
+.dep {
+  display: -webkit-flex; display: flex;
+  -webkit-align-items: center; align-items: center;
+  height: 86px;
+  border-bottom: 1px solid #1f2738;
+}
+.dep:last-child { border-bottom: 0; }
+
+.line {
+  width: 104px; height: 60px;
+  border-radius: 12px;
+  font-size: 32px; font-weight: 700;
+  line-height: 60px;
+  text-align: center;
+  color: #fff;
+  margin-right: 28px;
+  -webkit-flex-shrink: 0; flex-shrink: 0;
+}
+.mode-METRO.green { background: #179d4d; }
+.mode-METRO.red   { background: #d71d24; }
+.mode-METRO.blue  { background: #0089ca; }
+.mode-METRO       { background: #3a4458; }
+.mode-BUS         { background: #d71d24; }
+.mode-BUS.bluebus { background: #0071bc; }
+.mode-TRAIN       { background: #ec619f; }
+.mode-TRAM        { background: #d77d00; }
+.mode-SHIP, .mode-FERRY { background: #00a0b4; }
+
+.dest {
+  -webkit-flex: 1; flex: 1;
+  font-size: 38px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dest small {
+  display: block;
+  font-size: 22px;
+  color: #6b7590;
+  margin-top: 2px;
+}
+
+.when {
+  width: 190px;
+  text-align: right;
+  font-size: 40px;
+  font-weight: 600;
+  -webkit-flex-shrink: 0; flex-shrink: 0;
+}
+.when.now { color: #5bd38a; }
+
+.dep.cancelled .dest,
+.dep.cancelled .when { color: #6b7590; text-decoration: line-through; }
+
+#sl-deviations {
+  font-size: 24px;
+  color: #f2c14e;
+  margin-top: 14px;
+  max-height: 96px;
+  overflow: hidden;
+}
+#sl-deviations div {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  padding: 4px 0;
+}
+
+/* ---------- Footer ---------- */
+#footer {
+  position: absolute;
+  left: 72px; right: 72px; bottom: 32px;
+  font-size: 22px;
+  color: #4d5770;
+}
+#footer span { margin-right: 40px; }
+#updated { float: right; margin-right: 0 !important; }
+
+.error { color: #ff7a7a; font-size: 28px; }
