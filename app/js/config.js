@@ -1,32 +1,32 @@
 /*
- * Hemskärm – inställningar
- * Ändra här, bygg om och installera på nytt.
+ * Home Screen – settings
+ * Edit here, then rebuild and reinstall.
  */
 var CONFIG = {
-  // ---- Plats för väder ----
+  // ---- Weather location ----
   place: 'Stockholm',
   latitude: 59.3293,
   longitude: 18.0686,
 
-  // ---- SL-avgångar ----
-  // Hitta din hållplats: öppna https://transport.integration.sl.se/v1/sites
-  // och sök (Ctrl+F) på namnet. Använd "id"-värdet. 9192 = Slussen.
+  // ---- SL departures ----
+  // Find your stop: open https://transport.integration.sl.se/v1/sites
+  // and search (Ctrl+F) for the name. Use the "id" value. 9192 = Slussen.
   slSiteId: 9192,
   slSiteName: 'Slussen',
-  // Vilka trafikslag som visas: METRO, BUS, TRAIN, TRAM, SHIP, FERRY
+  // Which transport modes to show: METRO, BUS, TRAIN, TRAM, SHIP, FERRY
   slTransportModes: ['METRO', 'BUS', 'TRAIN', 'TRAM'],
-  // Visa bara vissa linjer, t.ex. ['17', '18', '19']. Tom lista = alla.
+  // Only show certain lines, e.g. ['17', '18', '19']. Empty list = all.
   slLines: [],
   slMaxDepartures: 8,
   slForecastMinutes: 60,
 
-  // ---- Kalender (valfritt) ----
-  // Google Kalender: Inställningar → din kalender → "Hemlig adress i iCal-format".
-  // Klistra in hela länken (slutar på basic.ics). Lämna tom för att dölja kalendern.
+  // ---- Calendar (optional) ----
+  // Google Calendar: Settings → your calendar → "Secret address in iCal format".
+  // Paste the full link (ends with basic.ics). Leave empty to hide the calendar.
   calendarIcsUrl: '',
-  calendarDays: 2, // idag + imorgon
+  calendarDays: 2, // today + tomorrow
 
-  // ---- Uppdateringsintervall (sekunder) ----
+  // ---- Refresh intervals (seconds) ----
   refreshWeather: 600,
   refreshSl: 30,
   refreshCalendar: 900

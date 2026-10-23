@@ -5,11 +5,11 @@
         version="1.0.0"
         viewmodes="maximized">
 
-  <!-- package = exakt 10 tecken (A-Z, a-z, 0-9) -->
+  <!-- package = exactly 10 characters (A-Z, a-z, 0-9) -->
   <tizen:application id="IbbeHome01.Hemskarm" package="IbbeHome01" required_version="3.0"/>
 
   <content src="index.html"/>
-  <!-- Bara ASCII här: Tizen CLI på Windows kan krångla med å/ä/ö -->
+  <!-- ASCII only here: the Tizen CLI on Windows can choke on å/ä/ö -->
   <name>Hemskarm</name>
   <icon src="icon.png"/>
 
@@ -19,7 +19,7 @@
   <tizen:privilege name="http://tizen.org/privilege/internet"/>
   <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
 
-  <!-- Tillåt anrop till API:erna (packade Tizen-appar slipper CORS) -->
+  <!-- Allow calls to the APIs (packaged Tizen apps are not subject to CORS) -->
   <access origin="*" subdomains="true"/>
 
   <tizen:setting screen-orientation="landscape"
