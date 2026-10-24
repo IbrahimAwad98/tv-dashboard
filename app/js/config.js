@@ -11,8 +11,8 @@ var CONFIG = {
   // ---- SL departures ----
   // Find your stop: open https://transport.integration.sl.se/v1/sites
   // and search (Ctrl+F) for the name. Use the "id" value. 9192 = Slussen.
-  slSiteId: 9192,
-  slSiteName: 'Slussen',
+  slSiteId: 4532,
+  slSiteName: 'Kungsängen',
   // Which transport modes to show: METRO, BUS, TRAIN, TRAM, SHIP, FERRY
   slTransportModes: ['METRO', 'BUS', 'TRAIN', 'TRAM'],
   // Only show certain lines, e.g. ['17', '18', '19']. Empty list = all.
