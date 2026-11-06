@@ -2,7 +2,7 @@
 <widget xmlns="http://www.w3.org/ns/widgets"
         xmlns:tizen="http://tizen.org/ns/widgets"
         id="http://ibbe.dev/hemskarm"
-        version="1.0.0"
+        version="2.0.0"
         viewmodes="maximized">
 
   <!-- package = exactly 10 characters (A-Z, a-z, 0-9) -->
@@ -20,6 +20,8 @@
   <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
   <tizen:privilege name="http://tizen.org/privilege/tv.channel"/>
   <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
+  <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+  <tizen:privilege name="http://tizen.org/privilege/application.info"/>
 
   <!-- Allow calls to the APIs (packaged Tizen apps are not subject to CORS) -->
   <access origin="*" subdomains="true"/>
