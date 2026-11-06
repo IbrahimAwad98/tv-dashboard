@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <title>Hemskärm – test i Chrome</title>
+  <link rel="stylesheet" href="app/css/style.css">
+  <style>
+    /* Svart bakom sidan = det TV:n visar där sidan är genomskinlig utan TV-bild */
+    html { background: #000; }
+    #testbar {
+      position: absolute; left: 0; top: 1080px; width: 1920px; padding: 12px 24px;
+      background: #222; color: #ccc; font: 18px Inter, sans-serif; z-index: 100;
+    }
+    #testbar b { color: #F5B544; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="testbar">
+    <b>Tangenter:</b> Pilar = navigera · Enter = OK · Backspace/Esc = Tillbaka · PageUp/PageDown = CH+/CH− ·
+    <b>Skärm:</b> <span id="testbar-screen"></span> · Öppna sidan i ett fönster som är minst 1920 px brett (eller zooma ut).
+  </div>
+
+  <script src="test/mock-tizen.js"></script>
+  <script src="app/js/config.js"></script>
+  <script>
+    // Testinställningar: fejkad kalender och kort vilotimer så att allt går att prova
+    CONFIG.calendarIcsUrl = 'mock://calendar.ics';
+    CONFIG.idleAfterSeconds = 60;
+  </script>
+  <script src="app/js/util.js"></script>
+  <script src="app/js/api.js"></script>
+  <script src="app/js/tv.js"></script>
+  <script src="app/js/focus.js"></script>
+  <script src="app/js/screens/home.js"></script>
+  <script src="app/js/screens/live.js"></script>
+  <script src="app/js/screens/idle.js"></script>
+  <script src="app/js/main.js"></script>
+  <script>
+    // Krymp sidan så att hela 1920x1080 syns i fönstret
+    var fit = Math.min(1, (window.innerWidth - 20) / 1920, (window.innerHeight - 60) / 1080);
+    document.documentElement.style.zoom = fit;
+    App.start();
+    setInterval(function () {
+      document.getElementById('testbar-screen').textContent = App.current();
+    }, 250);
+  </script>
+</body>
+</html>

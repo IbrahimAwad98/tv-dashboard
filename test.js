@@ -1,17 +1,14 @@
-// Run: node test.js
-// Checks the iCal parsing and recurrence logic in app/js/app.js (the only non-trivial code).
+// Kör: node test.js
+// Testar iCal-parsning och återkommande händelser i app/js/api.js.
 process.env.TZ = 'Europe/Stockholm';
 var fs = require('fs'), assert = require('assert');
 
-var src = fs.readFileSync(__dirname + '/app/js/app.js', 'utf8');
-// Expose internals instead of running init()
-var hooked = src.replace(/\n\s*init\(\);\s*\n\}\)\(\);\s*$/, '\n  module.exports = { parseIcs: parseIcs, occurrences: occurrences };\n})();\n');
-assert.notStrictEqual(hooked, src, 'could not hook app.js');
-
+global.CONFIG = { slTransportModes: [], slLines: [] };
 global.document = { addEventListener: function () {} };
-global.CONFIG = {};
-eval(hooked);
-var parseIcs = module.exports.parseIcs, occurrences = module.exports.occurrences;
+global.XMLHttpRequest = function () {};
+eval(fs.readFileSync(__dirname + '/app/js/util.js', 'utf8'));
+eval(fs.readFileSync(__dirname + '/app/js/api.js', 'utf8'));
+var parseIcs = Api.parseIcs, occurrences = Api.occurrences;
 
 function d(y, m, day, h, mi) { return new Date(y, m - 1, day, h || 0, mi || 0); }
 function times(list) { return list.map(function (x) { return x.getTime(); }); }
@@ -59,5 +56,9 @@ eq(occurrences(ev.c, d(2026, 10, 23), d(2026, 10, 25)), [d(2026, 10, 22, 22)]);
 var pills = occurrences(ev.e, d(2026, 10, 23), d(2026, 10, 27));
 assert.strictEqual(pills.length, 2);
 pills.forEach(function (p) { assert.strictEqual(p.getHours(), 8); });
+
+// upcoming(): sorterad lista med dagsetiketter
+var items = Api.upcoming(parseIcs(ics), 7);
+assert.ok(Array.isArray(items));
 
 console.log('ok');
