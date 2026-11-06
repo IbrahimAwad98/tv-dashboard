@@ -2,7 +2,13 @@
 
 A home screen for older Samsung Tizen TVs (2017, Tizen 3.0). Three screens, fully driven by the remote control, with weather, real-time SL departures, calendar, live TV from the built-in tuner and shortcuts to installed apps. Native TV app, no backend, no API keys.
 
-![Before and after: the stock Samsung home screen vs. the dashboard](docs/screenshot.jpg)
+![Home screen: greeting, next train, live TV window, app tiles and widgets](docs/home.jpg)
+
+| Live TV | Idle |
+|---|---|
+| ![Live TV: full-screen tuner with programme info and channel strip](docs/live.jpg) | ![Idle: big clock, weather, departures and calendar](docs/idle.jpg) |
+
+Screenshots from `test.html` in Chrome with mocked TV APIs; on the TV the picture area shows the tuner. The old dashboard next to the stock Samsung home screen is in [docs/screenshot.jpg](docs/screenshot.jpg).
 
 ## Screens
 
